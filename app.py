@@ -1,24 +1,23 @@
-import numpy as np
 import streamlit as st
+import numpy as np
 from tensorflow import keras
 
-# Load model
+st.title("📈 LSTM Model: Next Number Predictor")
+
 @st.cache_resource
 def load_model():
     return keras.models.load_model("model.keras")
 
 model = load_model()
 
-st.title("Keras Model Predictor")
-st.write("Enter comma-separated numbers for prediction (e.g., 1.0, 2.0, 3.0)")
-
-user_input = st.text_input("Input values:")
+st.markdown("### 🔢 Enter numbers (comma-separated):")
+user_input = st.text_input("Example: `1, 2, 3`")
 
 if st.button("Predict"):
     try:
-        input_values = [float(x.strip()) for x in user_input.split(',')]
-        input_array = np.array(input_values).reshape(1, -1)
+        values = np.array([float(x.strip()) for x in user_input.split(',')])
+        input_array = values.reshape(1, -1, 1)  # LSTM expects 3D input: (batch, timesteps, features)
         prediction = model.predict(input_array)
-        st.success(f"Prediction: {prediction.tolist()}")
+        st.success(f"✅ Prediction: {prediction[0][0]}")
     except Exception as e:
-        st.error(f"Error: {e}")
+        st.error(f"❌ Error: {e}")
