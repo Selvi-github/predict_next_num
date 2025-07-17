@@ -1,8 +1,6 @@
-import streamlit as st
 import numpy as np
+import streamlit as st
 from tensorflow import keras
-
-st.title("📈 LSTM Model: Next Number Predictor")
 
 @st.cache_resource
 def load_model():
@@ -10,14 +8,16 @@ def load_model():
 
 model = load_model()
 
-st.markdown("### 🔢 Enter numbers (comma-separated):")
-user_input = st.text_input("Example: `1, 2, 3`")
+st.title("🔢 LSTM: Predict Next Number")
+st.write("Enter a sequence (e.g., 1,2,3,4):")
+
+user_input = st.text_input("Sequence:")
 
 if st.button("Predict"):
     try:
-        values = np.array([float(x.strip()) for x in user_input.split(',')])
-        input_array = values.reshape(1, -1, 1)  # LSTM expects 3D input: (batch, timesteps, features)
+        data = [float(x.strip()) for x in user_input.split(',')]
+        input_array = np.array(data).reshape(1, -1, 1)
         prediction = model.predict(input_array)
-        st.success(f"✅ Prediction: {prediction[0][0]}")
+        st.success(f"🔮 Predicted Next Number: {prediction[0][0]:.4f}")
     except Exception as e:
-        st.error(f"❌ Error: {e}")
+        st.error(f"⚠️ Error: {e}")
